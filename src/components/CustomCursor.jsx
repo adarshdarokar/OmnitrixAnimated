@@ -1,19 +1,16 @@
-import { motion, useSpring } from "framer-motion";
+import { motion, useMotionValue } from "framer-motion";
 import { useEffect, useState } from "react";
 
 export default function CustomCursor() {
-  const [mousePosition, setMousePosition] = useState({ x: -100, y: -100 });
   const [isHovering, setIsHovering] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
-  // Smooth trailing physics for the cursor
-  const springConfig = { damping: 25, stiffness: 200, mass: 0.5 };
-  const cursorX = useSpring(-100, springConfig);
-  const cursorY = useSpring(-100, springConfig);
+  // Use MotionValue for instantaneous movement without lag
+  const cursorX = useMotionValue(-100);
+  const cursorY = useMotionValue(-100);
 
   useEffect(() => {
     const updateMousePosition = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
       cursorX.set(e.clientX - 16); // Center the 32px cursor
       cursorY.set(e.clientY - 16);
       if (!isVisible) setIsVisible(true);
