@@ -62,48 +62,45 @@ export default function OmnitrixScroll() {
     loadImages();
   }, []);
 
-    // Frame painting and sizing algorithms
+  const drawFrame = (frameIndex, ctx, canvas) => {
+    const img = images[frameIndex];
+    if (!img || !ctx || !canvas) return;
+
+    const canvasContainer = canvas.parentElement;
+    const cssWidth = canvasContainer?.clientWidth || window.innerWidth;
+    const cssHeight = window.innerHeight;
+    
+    ctx.clearRect(0, 0, cssWidth, cssHeight);
+
+    const hRatio = cssWidth / img.width;
+    const vRatio = cssHeight / img.height;
+    const ratio = Math.min(hRatio, vRatio); 
+    
+    const drawWidth = img.width * ratio;
+    const drawHeight = img.height * ratio;
+    
+    const centerShift_x = (cssWidth - drawWidth) / 2;
+    const centerShift_y = (cssHeight - drawHeight) / 2;
+
+    ctx.drawImage(
+      img,
+      0, 0, img.width, img.height,
+      centerShift_x, centerShift_y, drawWidth, drawHeight
+    );
+  };
+
   useEffect(() => {
     if (!isLoaded || images.length === 0 || !canvasRef.current) return;
 
     const canvas = canvasRef.current;
-    
-    // Create a container reference size since the canvas wrapper will be smaller now
-    const canvasContainer = canvas.parentElement; 
-    
     const context = canvas.getContext("2d", { alpha: true }); 
     let animationFrameId;
     let currentFrameIndex = 0;
 
-    const drawFrame = (frameIndex) => {
-      const img = images[frameIndex];
-      if (!img) return;
-
-      const cssWidth = canvasContainer.clientWidth;
-      const cssHeight = window.innerHeight;
-      
-      context.clearRect(0, 0, cssWidth, cssHeight);
-
-      const hRatio = cssWidth / img.width;
-      const vRatio = cssHeight / img.height;
-      const ratio = Math.min(hRatio, vRatio); 
-      
-      const drawWidth = img.width * ratio;
-      const drawHeight = img.height * ratio;
-      
-      const centerShift_x = (cssWidth - drawWidth) / 2;
-      const centerShift_y = (cssHeight - drawHeight) / 2;
-
-      context.drawImage(
-        img,
-        0, 0, img.width, img.height,
-        centerShift_x, centerShift_y, drawWidth, drawHeight
-      );
-    };
-
-    const resizeCanvas = () => {
+    const handleResize = () => {
       const dpr = window.devicePixelRatio || 1;
-      const cssWidth = canvasContainer.clientWidth;
+      const canvasContainer = canvas.parentElement;
+      const cssWidth = canvasContainer?.clientWidth || window.innerWidth;
       const cssHeight = window.innerHeight;
       
       canvas.width = cssWidth * dpr;
@@ -116,13 +113,12 @@ export default function OmnitrixScroll() {
       context.imageSmoothingEnabled = true;
       context.imageSmoothingQuality = "high";
       
-      drawFrame(currentFrameIndex);
+      drawFrame(currentFrameIndex, context, canvas);
     };
 
-    window.addEventListener("resize", resizeCanvas);
-    resizeCanvas(); 
+    window.addEventListener("resize", handleResize);
+    handleResize(); 
 
-    // Scroll value listener, binding to next free frame via requestAnimationFrame
     const unsubscribe = smoothProgress.on("change", (latest) => {
       const frameIndex = Math.min(
         TOTAL_FRAMES - 1,
@@ -134,12 +130,12 @@ export default function OmnitrixScroll() {
         if (animationFrameId) {
           cancelAnimationFrame(animationFrameId);
         }
-        animationFrameId = requestAnimationFrame(() => drawFrame(currentFrameIndex));
+        animationFrameId = requestAnimationFrame(() => drawFrame(currentFrameIndex, context, canvas));
       }
     });
 
     return () => {
-      window.removeEventListener("resize", resizeCanvas);
+      window.removeEventListener("resize", handleResize);
       unsubscribe();
       if (animationFrameId) {
         cancelAnimationFrame(animationFrameId);
