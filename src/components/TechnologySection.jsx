@@ -27,6 +27,10 @@ export default function TechnologySection() {
       {/* Background Grid */}
       <div className="absolute inset-0 pointer-events-none opacity-10 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:60px_60px]"></div>
 
+      {/* Localized Ambient Glow Patches */}
+      <div className="ambient-patch -top-20 right-0 opacity-20"></div>
+      <div className="ambient-patch bottom-0 -left-20 opacity-20"></div>
+
       <div className="max-w-7xl mx-auto px-6 relative z-10">
         <div className="flex flex-col lg:flex-row gap-16 items-start">
           <motion.div 

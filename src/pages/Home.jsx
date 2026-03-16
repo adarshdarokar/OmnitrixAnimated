@@ -13,6 +13,12 @@ export default function Home() {
       
       {/* Cinematic Gaming Hero Section */}
       <HeroSection />
+      
+      {/* Global Ambient Glows */}
+      <div className="ambient-patch -top-20 -left-20 opacity-40"></div>
+      <div className="ambient-patch top-1/4 -right-40 opacity-30"></div>
+      <div className="ambient-patch top-1/2 left-1/4 opacity-20"></div>
+      <div className="ambient-patch bottom-1/4 -left-40 opacity-30"></div>
 
       {/* Infinite scrolling branded text */}
       <InfiniteMarquee />
@@ -22,10 +28,14 @@ export default function Home() {
       
       {/* Static Sections follow the scroll content */}
       <AlienSection />
+      <div className="ambient-patch top-[60%] -right-20 opacity-40 animate-pulse"></div>
       <TechnologySection />
+      <div className="ambient-patch bottom-20 left-10 opacity-30"></div>
       
       {/* About Section */}
       <section id="about" className="py-32 bg-[#0a0a0a] relative z-20 overflow-hidden">
+        <div className="ambient-patch top-0 left-0 opacity-20"></div>
+        <div className="ambient-patch bottom-0 right-0 opacity-20"></div>
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#00ff88]/5 rounded-full blur-[100px] pointer-events-none"></div>
         <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
           <h2 className="text-4xl md:text-5xl font-orbitron font-bold text-white mb-8 leading-tight">

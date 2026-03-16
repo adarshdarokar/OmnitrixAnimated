@@ -12,6 +12,10 @@ export default function HeroSection() {
       <div className="absolute top-1/4 right-1/4 w-2 h-2 rounded-full bg-[#00ff88] shadow-[0_0_15px_#00ff88] animate-[ping_4s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
       <div className="absolute top-3/4 right-1/3 w-1.5 h-1.5 rounded-full bg-[#00ff88] shadow-[0_0_10px_#00ff88] animate-[ping_6s_cubic-bezier(0,0,0.2,1)_infinite_1s] opacity-50"></div>
       <div className="absolute top-1/2 right-1/5 w-1 h-1 rounded-full bg-[#00ff88] shadow-[0_0_5px_#00ff88] animate-[ping_5s_cubic-bezier(0,0,0.2,1)_infinite_2s] opacity-70"></div>
+      
+      {/* Localized Ambient Glow Patches */}
+      <div className="ambient-patch -top-40 -left-60 opacity-30"></div>
+      <div className="ambient-patch bottom-0 right-1/4 opacity-20"></div>
 
       <div className="max-w-7xl mx-auto px-6 w-full relative z-10 flex flex-col md:flex-row items-center justify-between gap-12 pt-10">
         
@@ -30,8 +34,7 @@ export default function HeroSection() {
 
           {/* Heading */}
           <h1 className="text-6xl md:text-7xl lg:text-8xl font-orbitron font-black text-white uppercase leading-[0.9] mb-6 drop-shadow-[0_10px_10px_rgba(0,0,0,0.8)]">
-            Next Gen <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-[#00ff88] to-[#00ff88] drop-shadow-[0_0_30px_rgba(0,255,136,0.3)]">Gaming</span>
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-white via-[#00ff88] to-[#00ff88] drop-shadow-[0_0_30px_rgba(0,255,136,0.3)]">Omnitrix</span>
           </h1>
 
           {/* Description */}

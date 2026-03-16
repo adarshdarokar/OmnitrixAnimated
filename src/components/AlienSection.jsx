@@ -1,10 +1,12 @@
 import { motion } from "framer-motion";
 
 const ALIENS = [
-  { id: "DNA-01", name: "Heatblast", class: "PYRO-CLASS", power: "Pyrokinesis & Fire Manipulation" },
-  { id: "DNA-02", name: "Four Arms", class: "BRUTE-CLASS", power: "Superhuman Strength & Durability" },
-  { id: "DNA-03", name: "XLR8", class: "SPEED-CLASS", power: "Extreme Frictionless Speed" },
-  { id: "DNA-04", name: "Diamondhead", class: "CRYSTAL-CLASS", power: "Crystallokinesis & Weapon Generation" },
+  { id: "DNA-01", name: "Heatblast", class: "PYRO-CLASS", power: "Pyrokinesis & Fire Manipulation", img: "/Alien 1.jpg" },
+  { id: "DNA-02", name: "Four Arms", class: "BRUTE-CLASS", power: "Superhuman Strength & Durability", img: "/Alien 2.jpg" },
+  { id: "DNA-03", name: "XLR8", class: "SPEED-CLASS", power: "Extreme Frictionless Speed", img: "/Alien 3.jpg" },
+  { id: "DNA-05", name: "Diamondhead", class: "CRYSTAL-CLASS", power: "Crystallokinesis & Weapon Generation", img: "/Alien5.jpg" },
+  { id: "DNA-06", name: "Cannonbolt", class: "ARMOR-CLASS", power: "High-Speed Kinetic Impact", img: "/Alien 6.jpg" },
+  { id: "DNA-07", name: "Wildmutt", class: "BEAST-CLASS", power: "Enhanced Senses & Agility", img: "/Alien 7.jpg" },
 ];
 
 export default function AlienSection() {
@@ -27,7 +29,7 @@ export default function AlienSection() {
           </div>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {ALIENS.map((alien, index) => (
             <motion.div
               key={alien.name}
@@ -35,32 +37,45 @@ export default function AlienSection() {
               whileInView={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.7, delay: index * 0.15, ease: [0.16, 1, 0.3, 1] }}
               viewport={{ once: true, margin: "-50px" }}
-              className="gaming-card p-6 h-72 flex flex-col justify-between group cursor-pointer border border-white/5 hover:border-[#00ff88]/80 transition-all duration-300"
+              className="relative gaming-card h-[600px] flex flex-col justify-end overflow-hidden group cursor-pointer border border-white/10 hover:border-[#00ff88]/50 transition-all duration-500 rounded-sm shadow-2xl"
             >
-              <div className="scan-line opacity-0 group-hover:opacity-100"></div>
-              
-              <div className="flex justify-between items-start z-10">
-                <span className="font-mono text-xs text-[#00ff88] border border-[#00ff88]/30 px-2 py-1 bg-[#00ff88]/5">
-                  {alien.id}
-                </span>
-                <span className="font-mono text-[10px] text-white/40 group-hover:text-[#00ff88]/60 uppercase tracking-widest transition-colors">
-                  {alien.class}
-                </span>
-              </div>
-              
-              <div className="relative z-10 mt-auto">
-                <div className="h-[2px] w-8 bg-white/20 mb-4 group-hover:w-full group-hover:bg-[#00ff88] transition-all duration-500"></div>
-                <h3 className="text-3xl font-orbitron text-white group-hover:text-[#00ff88] transition-colors duration-300 mb-2 uppercase tracking-wide">
-                  {alien.name}
-                </h3>
-                <p className="font-mono text-white/50 text-xs leading-relaxed group-hover:text-white/80 transition-colors">
-                  {alien.power}
-                </p>
+              {/* Background Image with Overlay */}
+              <div className="absolute inset-0 z-0 overflow-hidden">
+                <img 
+                  src={alien.img} 
+                  alt={alien.name} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 opacity-60 group-hover:opacity-100"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10"></div>
               </div>
 
-              {/* Decorative Corners */}
-              <div className="absolute top-0 left-0 w-3 h-3 border-t-2 border-l-2 border-transparent group-hover:border-[#00ff88] transition-colors"></div>
-              <div className="absolute bottom-0 right-0 w-3 h-3 border-b-2 border-r-2 border-transparent group-hover:border-[#00ff88] transition-colors"></div>
+              <div className="scan-line opacity-0 group-hover:opacity-100 z-30"></div>
+              
+              <div className="relative z-20 p-8 flex flex-col h-full justify-between">
+                <div className="flex justify-between items-start">
+                  <span className="font-mono text-xs text-[#00ff88] border border-[#00ff88]/30 px-3 py-1 bg-black/80 backdrop-blur-sm">
+                    {alien.id}
+                  </span>
+                  <span className="font-mono text-[10px] text-white/40 group-hover:text-[#00ff88] uppercase tracking-[0.2em] transition-colors bg-black/40 px-2 py-1 backdrop-blur-md">
+                    {alien.class}
+                  </span>
+                </div>
+                
+                <div className="mt-auto transform translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
+                  <div className="h-[2px] w-12 bg-[#00ff88] mb-4 group-hover:w-full transition-all duration-700"></div>
+                  <h3 className="text-3xl font-orbitron text-white group-hover:text-[#00ff88] transition-colors duration-300 mb-2 uppercase tracking-tighter font-black drop-shadow-2xl">
+                    {alien.name}
+                  </h3>
+                  <p className="font-mono text-white/50 text-xs leading-relaxed group-hover:text-white/90 transition-colors bg-black/20 p-2 rounded backdrop-blur-sm border-l border-[#00ff88]/0 group-hover:border-[#00ff88]/50">
+                    {alien.power}
+                  </p>
+                </div>
+              </div>
+
+              {/* Decorative HUD Elements */}
+              <div className="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-[#00ff88]/0 group-hover:border-[#00ff88] transition-all duration-300"></div>
+              <div className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#00ff88]/0 group-hover:border-[#00ff88] transition-all duration-300"></div>
+              <div className="absolute top-4 right-4 w-1 h-8 bg-[#00ff88]/0 group-hover:bg-[#00ff88]/40 transition-all duration-500"></div>
             </motion.div>
           ))}
         </div>
