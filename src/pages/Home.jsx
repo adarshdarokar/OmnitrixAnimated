@@ -1,4 +1,6 @@
 import Navbar from "../components/Navbar";
+import HeroSection from "../components/HeroSection";
+import InfiniteMarquee from "../components/InfiniteMarquee";
 import OmnitrixScroll from "../components/OmnitrixScroll";
 import AlienSection from "../components/AlienSection";
 import TechnologySection from "../components/TechnologySection";
@@ -9,6 +11,12 @@ export default function Home() {
     <main className="w-full relative">
       <Navbar />
       
+      {/* Cinematic Gaming Hero Section */}
+      <HeroSection />
+
+      {/* Infinite scrolling branded text */}
+      <InfiniteMarquee />
+
       {/* Scroll-based animation section */}
       <OmnitrixScroll />
       
