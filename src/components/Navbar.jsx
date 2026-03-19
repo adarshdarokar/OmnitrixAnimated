@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { useState, useEffect } from "react";
+import Magnet from "./Magnet";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -10,38 +11,49 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const navLinks = [
+    { name: "Home", href: "#home" },
+    { name: "Aliens", href: "#aliens" },
+    { name: "Technology", href: "#technology" },
+    { name: "About", href: "#about" },
+  ];
+
   return (
-    <motion.nav 
-      initial={{ y: -100, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.8, ease: "easeOut", delay: 1 }}
-      className={`fixed top-0 left-0 w-full z-50 transition-all duration-500 ${
-        scrolled ? "bg-[#0a0a0a]/80 backdrop-blur-xl border-b border-[#00ff88]/30 shadow-[0_4px_30px_rgba(0,0,0,0.8)]" : "bg-transparent border-b border-transparent"
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between relative">
-        <div className="text-2xl font-bold font-orbitron tracking-widest text-[#00ff88] glow-text cursor-pointer flex items-center gap-3 group">
-          <div className="w-8 h-8 rounded-full border-2 border-[#00ff88] flex items-center justify-center animate-[spin_5s_linear_infinite] shadow-[0_0_10px_#00ff88] group-hover:scale-110 transition-transform">
-            <div className="w-4 h-4 bg-[#00ff88] rounded-sm transform rotate-45"></div>
-          </div>
-          <span className="mt-1">OMNITRIX</span>
-        </div>
-        
-        <div className="hidden md:flex gap-8 items-center font-rajdhani text-lg uppercase tracking-wider">
-          {['Home', 'Aliens', 'Technology', 'About'].map((item) => (
-            <a 
-              key={item} 
-              href={`#${item.toLowerCase()}`}
-              className="text-white/70 hover:text-[#00ff88] transition-all duration-300 relative group flex items-center gap-1"
-            >
-              <span className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 text-[#00ff88] transition-all duration-300">[</span>
-              {item}
-              <span className="opacity-0 translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 text-[#00ff88] transition-all duration-300">]</span>
-              <span className="absolute -bottom-2 left-0 w-0 h-[2px] bg-[#00ff88] transition-all duration-300 group-hover:w-full drop-shadow-[0_0_8px_rgba(0,255,136,0.8)]"></span>
-            </a>
+    <nav className={`fixed top-0 left-0 w-full z-[100] transition-all duration-500 ${
+      scrolled ? "py-4 glass-panel border-b border-[#00ff88]/10" : "py-8 bg-transparent"
+    }`}>
+      <div className="max-w-7xl mx-auto px-6 flex justify-between items-center">
+        <Magnet strength={0.4} range={60}>
+          <a href="#home" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 border-2 border-[#00ff88] rounded-full flex items-center justify-center relative overflow-hidden group-hover:shadow-[0_0_15px_rgba(0,255,136,0.4)] transition-all">
+              <div className="w-5 h-5 bg-[#00ff88] clip-omnitrix"></div>
+            </div>
+            <span className="font-syncopate font-bold text-lg md:text-xl text-white tracking-[0.2em] group-hover:text-[#00ff88] transition-colors">
+              OMNITRIX
+            </span>
+          </a>
+        </Magnet>
+
+        <div className="hidden md:flex items-center gap-10">
+          {navLinks.map((link) => (
+            <Magnet key={link.name} strength={0.25} range={40}>
+              <a 
+                href={link.href} 
+                className="font-inter text-[10px] uppercase tracking-[0.3em] text-white/60 hover:text-[#00ff88] transition-all relative group py-2"
+              >
+                {link.name}
+                <span className="absolute bottom-0 left-0 w-0 h-[1px] bg-[#00ff88] group-hover:w-full transition-all duration-300"></span>
+              </a>
+            </Magnet>
           ))}
+          
+          <Magnet strength={0.3} range={50}>
+            <button className="px-8 py-2.5 rounded-full border border-[#00ff88]/30 font-syncopate text-[9px] tracking-[0.2em] text-white hover:bg-[#00ff88] hover:text-black transition-all duration-300">
+              LOG IN
+            </button>
+          </Magnet>
         </div>
       </div>
-    </motion.nav>
+    </nav>
   );
 }

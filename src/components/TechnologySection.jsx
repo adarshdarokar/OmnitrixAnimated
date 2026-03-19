@@ -1,100 +1,104 @@
 import { motion } from "framer-motion";
+import Magnet from "./Magnet";
 
-const FEATURES = [
+const features = [
   {
-    id: "SYS-01",
-    title: "DNA Scanner",
-    desc: "Acquires and catalogues extraterrestrial genetic signatures across the universe with 99.9% accuracy.",
-    icon: "[ 🧬 ]"
+    id: "01",
+    title: "DNA Matix",
+    desc: "Infinite storage of extraterrestrial DNA sequences with instant access.",
+    icon: "🧬"
   },
   {
-    id: "SYS-02",
-    title: "Morph Engine",
-    desc: "Rewrites the user's cellular structure dynamically to morph into the selected species.",
-    icon: "[ ⚡ ]"
+    id: "02",
+    title: "Metamorph",
+    desc: "Seamless atomic restructuring for high-speed biological transformation.",
+    icon: "⚙️"
   },
   {
-    id: "SYS-03",
-    title: "Quantum Core",
-    desc: "Powers the device using zero-point energy, ensuring immediate charge regeneration.",
-    icon: "[ 🔋 ]"
+    id: "03",
+    title: "Quantum Link",
+    desc: "Encrypted connection to the Primus core for DNA sequence updates.",
+    icon: "📡"
+  },
+  {
+    id: "04",
+    title: "Safety Node",
+    desc: "Failsafe mechanisms for transformation time-limits and user health.",
+    icon: "🛡️"
   }
 ];
 
 export default function TechnologySection() {
   return (
-    <section id="technology" className="py-32 relative z-20 bg-[#050505]">
-      {/* Background Grid */}
-      <div className="absolute inset-0 pointer-events-none opacity-10 bg-[linear-gradient(rgba(255,255,255,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.05)_1px,transparent_1px)] bg-[size:60px_60px]"></div>
-
-      {/* Localized Ambient Glow Patches */}
-      <div className="ambient-patch -top-20 right-0 opacity-20"></div>
-      <div className="ambient-patch bottom-0 -left-20 opacity-20"></div>
-
+    <section id="technology" className="py-32 bg-[#050505] relative overflow-hidden">
+      <div className="ambient-mesh opacity-20"></div>
+      
       <div className="max-w-7xl mx-auto px-6 relative z-10">
-        <div className="flex flex-col lg:flex-row gap-16 items-start">
-          <motion.div 
-            initial={{ opacity: 0, x: -50 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            viewport={{ once: true, margin: "-100px" }}
-            className="lg:w-1/3 gaming-card p-10 border-l-4 border-l-[#00ff88]"
-          >
-            <div className="text-xs text-[#00ff88] font-mono tracking-widest mb-4">DIAGNOSTICS_MODE</div>
-            <h2 className="text-4xl md:text-5xl font-orbitron font-bold text-white mb-6 leading-tight uppercase">
-              Core <br/> <span className="text-[#00ff88] glow-text">Systems</span>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+          
+          {/* Schematic Overview - LEFT */}
+          <div className="lg:col-span-5 flex flex-col">
+            <span className="text-[10px] font-mono text-[#00ff88] tracking-[0.6em] uppercase mb-4 block opacity-60">System // Engineering</span>
+            <h2 className="text-fluid-md font-syncopate font-bold text-white uppercase italic mb-12">
+              The <span className="text-[#00ff88]">Schematic</span>
             </h2>
-            <div className="h-[1px] w-full bg-gradient-to-r from-[#00ff88] to-transparent mb-6"></div>
-            <p className="font-mono text-white/60 text-sm leading-relaxed mb-8">
-              The Omnitrix is a Level 20 technology device created by Azmuth. It serves as a repository for the DNA of over a million intelligent species in the Milky Way galaxy.
+            
+            <p className="font-inter text-white/40 text-sm leading-relaxed mb-12 max-w-md tracking-wider">
+              Engineered by the First Thinker, the Omnitrix represents the pinnacle of intergalactic peace-keeping technology.
             </p>
             
-            <div className="flex items-center gap-4 text-xs font-mono text-white/40">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[#00ff88] animate-pulse"></div>
-                OP_NORMAL
+            <div className="relative p-8 border border-[#00ff88]/10 bg-[#00ff88]/5 rounded-sm overflow-hidden group">
+              <div className="absolute top-0 right-0 p-4 font-mono text-[8px] text-[#00ff88]/40">REV_4.0.2</div>
+              <div className="flex flex-col gap-6">
+                {[...Array(3)].map((_, i) => (
+                  <div key={i} className="flex flex-col gap-2">
+                    <div className="h-1 bg-[#00ff88]/20 w-full rounded-full overflow-hidden">
+                      <motion.div 
+                        initial={{ x: "-100%" }}
+                        whileInView={{ x: "0%" }}
+                        transition={{ duration: 2, delay: i * 0.3 }}
+                        className="h-full bg-[#00ff88] w-2/3"
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-[#00ff88]"></div>
-                SYS_ONLINE
-              </div>
+              <div className="scanline-overlay opacity-20"></div>
             </div>
-          </motion.div>
+          </div>
 
-          <div className="lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-            {FEATURES.map((feat, idx) => (
-              <motion.div
-                key={feat.title}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: idx * 0.2, ease: [0.16, 1, 0.3, 1] }}
-                viewport={{ once: true, margin: "-100px" }}
-                className="glass-panel p-8 rounded-none border border-white/5 hover:border-[#00ff88]/50 transition-all duration-300 relative group cursor-default"
-              >
-                {/* Scan line effect inside panel */}
-                <div className="absolute top-0 left-0 w-full h-[1px] bg-[#00ff88] opacity-0 group-hover:opacity-100 group-hover:top-full transition-all duration-1000 ease-linear shadow-[0_0_10px_#00ff88]"></div>
-                
-                <div className="flex justify-between items-center border-b border-white/10 pb-4 mb-6 relative z-10">
-                  <div className="font-mono text-[#00ff88] text-sm tracking-widest">{feat.id}</div>
-                  <div className="text-2xl opacity-50 group-hover:opacity-100 transition-opacity">{feat.icon}</div>
-                </div>
-
-                <div className="relative z-10">
-                  <h3 className="text-xl font-orbitron text-white mb-4 uppercase tracking-wide group-hover:text-[#00ff88] transition-colors">{feat.title}</h3>
-                  <p className="font-mono text-white/50 text-xs leading-relaxed group-hover:text-white/80 transition-colors">
-                    {feat.desc}
-                  </p>
-                </div>
-                
-                {/* Decorative Tech UI Nodes */}
-                <div className="absolute bottom-4 right-4 flex gap-1 z-10">
-                  <div className="w-1 h-2 bg-white/20 group-hover:bg-[#00ff88] transition-colors delay-75"></div>
-                  <div className="w-1 h-3 bg-white/20 group-hover:bg-[#00ff88] transition-colors delay-100"></div>
-                  <div className="w-1 h-4 bg-white/20 group-hover:bg-[#00ff88] transition-colors delay-150"></div>
-                </div>
-              </motion.div>
+          {/* Feature Grid - RIGHT */}
+          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {features.map((feature, index) => (
+              <Magnet key={feature.id} strength={0.15} range={30}>
+                <motion.div
+                  initial={{ opacity: 0, x: 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1 }}
+                  className="p-8 glass-panel-glow hover:border-[#00ff88]/40 transition-all duration-500 flex flex-col gap-6 group"
+                >
+                  <div className="flex justify-between items-start">
+                    <span className="text-2xl group-hover:scale-110 transition-transform duration-500 grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100">{feature.icon}</span>
+                    <span className="font-mono text-[9px] text-[#00ff88]/40 tracking-widest">{feature.id}</span>
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <h3 className="font-syncopate font-bold text-sm text-white group-hover:text-[#00ff88] transition-colors uppercase tracking-widest">{feature.title}</h3>
+                    <p className="font-inter text-xs text-white/40 leading-relaxed">{feature.desc}</p>
+                  </div>
+                  <div className="h-[1px] w-full bg-[#00ff88]/10 relative overflow-hidden">
+                    <motion.div 
+                      whileHover={{ x: "100%" }}
+                      initial={{ x: "-100%" }}
+                      transition={{ duration: 1, ease: "linear", repeat: Infinity }}
+                      className="absolute inset-0 bg-gradient-to-r from-transparent via-[#00ff88] to-transparent w-1/2"
+                    />
+                  </div>
+                </motion.div>
+              </Magnet>
             ))}
           </div>
+
         </div>
       </div>
     </section>

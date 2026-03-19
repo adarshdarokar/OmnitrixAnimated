@@ -32,19 +32,30 @@ export default function Home() {
       <TechnologySection />
       <div className="ambient-patch bottom-20 left-10 opacity-30"></div>
       
-      {/* About Section */}
-      <section id="about" className="py-32 bg-[#0a0a0a] relative z-20 overflow-hidden">
-        <div className="ambient-patch top-0 left-0 opacity-20"></div>
-        <div className="ambient-patch bottom-0 right-0 opacity-20"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-[#00ff88]/5 rounded-full blur-[100px] pointer-events-none"></div>
-        <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-          <h2 className="text-4xl md:text-5xl font-orbitron font-bold text-white mb-8 leading-tight">
-            "It's just a gadget, <br/> <span className="text-[#00ff88] glow-text">be the hero.</span>"
+      {/* About Section Refined - Optimized */}
+      <section id="about" className="py-48 bg-[#050505] relative overflow-hidden border-t border-white/5">
+        <div className="ambient-mesh opacity-10"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[#00ff88]/5 blur-[80px] rounded-full pointer-events-none"></div>
+        
+        <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
+          <div className="flex flex-col items-center mb-16 px-4">
+            <div className="w-[1px] h-16 bg-gradient-to-t from-[#00ff88] to-transparent opacity-30 mb-8"></div>
+            <span className="text-[10px] font-mono text-[#00ff88] tracking-[0.8em] uppercase">Ethos // Origins</span>
+          </div>
+
+          <h2 className="text-fluid-md font-syncopate font-bold text-white mb-12 leading-none uppercase italic tracking-tighter">
+            "Gadgets Fade, <br/> 
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00ff88] to-[#004d2c] drop-shadow-[0_0_20px_rgba(0,255,136,0.2)]">Heroes Evolve</span>"
           </h2>
-          <p className="font-mono text-white/50 text-lg lg:text-xl leading-relaxed max-w-2xl mx-auto">
-            The Omnitrix isn't just a weapon. It's a device designed to promote inter-species understanding by allowing the user to experience life in the shoes of another.
+          
+          <p className="font-inter text-white/30 text-sm md:text-base lg:text-lg leading-relaxed max-w-3xl mx-auto tracking-widest uppercase opacity-80">
+            The Omnitrix isn't just a weapon. It's a bridge between worlds. Created to promote inter-species understanding, it allows the user to experience existence through a million different lenses.
           </p>
-          <div className="mt-12 w-1 h-32 bg-gradient-to-b from-[#00ff88] to-transparent mx-auto opacity-50"></div>
+          
+          <div className="mt-20 flex justify-center gap-4">
+            <div className="w-1 h-1 rounded-full bg-[#00ff88]"></div>
+            <div className="w-1 h-1 rounded-full bg-[#00ff88]/30"></div>
+          </div>
         </div>
       </section>
 
