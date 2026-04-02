@@ -17,6 +17,7 @@
   /* Spacing & Sizes */
   --color-white: #ffffff;
   --header-height: 80px;
+  --section-padding: clamp(5rem, 10vh, 10rem);
 }
 
 @layer base {
@@ -63,14 +64,28 @@
   background: rgba(0, 255, 136, 0.02);
 }
 
-/* Gaming Card Redesign */
+.ambient-patch {
+  @apply absolute w-[600px] h-[600px] bg-[#00ff88]/20 rounded-full blur-[120px] pointer-events-none;
+  will-change: transform, opacity;
+}
+
+.transform-gpu {
+  transform: translateZ(0);
+}
+
+section {
+  padding-top: var(--section-padding);
+  padding-bottom: var(--section-padding);
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 1000px;
+}
+
+/* Gaming Card Redesign - Performance Optimized */
 .gaming-card {
-  position: relative;
-  overflow: hidden;
-  background: #080808;
-  border: 1px solid rgba(0, 255, 136, 0.1);
+  @apply relative bg-black/40 border border-white/10 backdrop-blur-md overflow-hidden;
+  will-change: transform;
   clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
-  transition: transform 0.3s ease, border-color 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
 }
 
 .gaming-card:hover {

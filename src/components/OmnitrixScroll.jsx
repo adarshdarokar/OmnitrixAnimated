@@ -3,12 +3,11 @@ import { useScroll, motion, useTransform, useSpring } from "framer-motion";
 
 const TOTAL_FRAMES = 30;
 
-export default function OmnitrixScroll() {
+export default function OmnitrixScroll({ onProgress }) {
   const containerRef = useRef(null);
   const canvasRef = useRef(null);
   const [images, setImages] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const [loadProgress, setLoadProgress] = useState(0);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -17,8 +16,8 @@ export default function OmnitrixScroll() {
 
   // Lighter spring physics for smoother framerate without heavy lag
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 80,
-    damping: 25,
+    stiffness: 100,
+    damping: 30,
     restDelta: 0.001
   });
 
@@ -40,7 +39,8 @@ export default function OmnitrixScroll() {
         img.onload = () => {
           loadedCount++;
           loadedImages[i - 1] = img; // Retain exact sorting
-          setLoadProgress(Math.round((loadedCount / TOTAL_FRAMES) * 100));
+          const currentProgress = Math.round((loadedCount / TOTAL_FRAMES) * 100);
+          if (onProgress) onProgress(currentProgress);
 
           if (loadedCount === TOTAL_FRAMES) {
             setImages(loadedImages);
@@ -164,18 +164,7 @@ export default function OmnitrixScroll() {
   const coverOpacity = useTransform(smoothProgress, [0, 0.005], [1, 0]);
 
   return (
-    <div ref={containerRef} className="relative w-full" style={{ height: "800vh" }} id="home">
-      {/* Loading Overlay */}
-      {!isLoaded && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0a0a0a]">
-          <div className="w-24 h-24 border-2 border-[#111] border-t-[#00ff88] rounded-full animate-spin mb-6 glow-border relative flex items-center justify-center">
-             <div className="w-16 h-16 border-2 border-[#111] border-b-[#00ff88] rounded-full animate-[spin_2s_linear_infinite_reverse]"></div>
-          </div>
-          <div className="text-[#00ff88] font-mono text-xl glow-text tracking-[0.3em]">
-            SYSTEM BOOTING... {loadProgress}%
-          </div>
-        </div>
-      )}
+    <div ref={containerRef} className="relative w-full" style={{ height: "600vh" }} id="home">
       
       <div className="sticky top-0 w-full h-screen overflow-hidden bg-[#0a0a0a] flex items-center justify-center">
         {/* HUD Grid Overlay */}
@@ -197,7 +186,7 @@ export default function OmnitrixScroll() {
 
         {/* Reduced Width Canvas Wrapper with Cinematic Zoom */}
         <motion.div 
-          style={{ scale: canvasScale }}
+          style={{ scale: canvasScale, willChange: "transform" }}
           className="relative w-11/12 md:w-4/5 lg:w-[60%] h-full flex items-center justify-center z-0 origin-center"
         >
           {/* Static Cover Image (Ben10.jpg) that sits perfectly until scrolling begins */}

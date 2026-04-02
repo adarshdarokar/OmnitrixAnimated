@@ -7,34 +7,48 @@ const aliens = [
     name: "Heatblast", 
     class: "Pyronite", 
     power: "Pyrokinesis", 
-    image: "https://static.wikia.nocookie.net/ben10/images/d/d4/Heatblast_Classic.png"
+    image: "/Alien 1.jpg"
   },
   { 
     id: "02", 
     name: "Four Arms", 
     class: "Tetramand", 
     power: "Super Strength", 
-    image: "https://static.wikia.nocookie.net/ben10/images/6/63/Four_Arms_Classic.png"
+    image: "/Alien 2.jpg"
   },
   { 
     id: "03", 
     name: "XLR8", 
     class: "Kineceleran", 
     power: "Super Speed", 
-    image: "https://static.wikia.nocookie.net/ben10/images/a/a7/XLR8_Classic.png"
+    image: "/Alien 3.jpg"
   },
   { 
     id: "04", 
     name: "Diamondhead", 
     class: "Petrosapien", 
     power: "Crystallokinesis", 
-    image: "https://static.wikia.nocookie.net/ben10/images/2/2a/Diamondhead_Classic.png"
+    image: "/Alien5.jpg"
+  },
+  { 
+    id: "05", 
+    name: "Cannonbolt", 
+    class: "Arburian Pelarota", 
+    power: "Spherical Armor", 
+    image: "/Alien 6.jpg"
+  },
+  { 
+    id: "06", 
+    name: "Ghostfreak", 
+    class: "Ectonurite", 
+    power: "Intangibility", 
+    image: "/Alien 7.jpg"
   }
 ];
 
 export default function AlienSection() {
   return (
-    <section id="aliens" className="py-32 bg-[#050505] relative overflow-hidden">
+    <section id="aliens" className="bg-[#050505] relative overflow-hidden">
       <div className="ambient-mesh opacity-20"></div>
       
       <div className="max-w-7xl mx-auto px-6 relative z-10">
@@ -50,14 +64,33 @@ export default function AlienSection() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <motion.div 
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={{
+            hidden: { opacity: 0 },
+            visible: {
+              opacity: 1,
+              transition: {
+                staggerChildren: 0.08,
+              }
+            }
+          }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8"
+        >
           {aliens.map((alien, index) => (
             <Magnet key={alien.id} strength={0.2} range={40}>
               <motion.div
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
+                variants={{
+                  hidden: { opacity: 0, y: 50, scale: 0.9 },
+                  visible: { 
+                    opacity: 1, 
+                    y: 0, 
+                    scale: 1,
+                    transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] }
+                  }
+                }}
                 className="gaming-card group cursor-pointer aspect-[3/4] flex flex-col"
               >
                 <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-black/80 z-10"></div>
@@ -87,7 +120,7 @@ export default function AlienSection() {
               </motion.div>
             </Magnet>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

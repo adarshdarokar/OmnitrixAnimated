@@ -30,7 +30,7 @@ const features = [
 
 export default function TechnologySection() {
   return (
-    <section id="technology" className="py-32 bg-[#050505] relative overflow-hidden">
+    <section id="technology" className="bg-[#050505] relative overflow-hidden">
       <div className="ambient-mesh opacity-20"></div>
       
       <div className="max-w-7xl mx-auto px-6 relative z-10">
@@ -68,14 +68,32 @@ export default function TechnologySection() {
           </div>
 
           {/* Feature Grid - RIGHT */}
-          <div className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <motion.div 
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: "-100px" }}
+            variants={{
+              hidden: { opacity: 0 },
+              visible: {
+                opacity: 1,
+                transition: {
+                  staggerChildren: 0.04,
+                }
+              }
+            }}
+            className="lg:col-span-7 grid grid-cols-1 sm:grid-cols-2 gap-6"
+          >
             {features.map((feature, index) => (
               <Magnet key={feature.id} strength={0.15} range={30}>
                 <motion.div
-                  initial={{ opacity: 0, x: 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
+                  variants={{
+                    hidden: { opacity: 0, x: 30 },
+                    visible: { 
+                      opacity: 1, 
+                      x: 0,
+                      transition: { duration: 0.4, ease: "easeOut" }
+                    }
+                  }}
                   className="p-8 glass-panel-glow hover:border-[#00ff88]/40 transition-all duration-500 flex flex-col gap-6 group"
                 >
                   <div className="flex justify-between items-start">
@@ -97,7 +115,7 @@ export default function TechnologySection() {
                 </motion.div>
               </Magnet>
             ))}
-          </div>
+          </motion.div>
 
         </div>
       </div>

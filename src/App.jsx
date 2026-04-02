@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import Home from "./pages/Home";
 import BootLoader from "./components/BootLoader";
 import CustomCursor from "./components/CustomCursor";
@@ -10,6 +11,7 @@ import SVGFilters from "./components/SVGFilters";
 export default function App() {
   const [booting, setBooting] = useState(true);
   const [audioStarted, setAudioStarted] = useState(false);
+  const [loadProgress, setLoadProgress] = useState(0);
 
   const startSite = () => {
     setBooting(false);
@@ -23,12 +25,24 @@ export default function App() {
         <NoiseOverlay />
         <SVGFilters />
         <BackgroundMusic play={audioStarted} />
-        <BootLoader onComplete={startSite} />
         
-        {/* Remove max-h screen lock once booted */}
-        <div className={`transition-opacity duration-1000 ${booting ? 'opacity-0 h-screen overflow-hidden pointer-events-none' : 'opacity-100'}`}>
-          {!booting && <Home />}
-        </div>
+        <AnimatePresence>
+          {booting && (
+            <BootLoader key="loader" onComplete={startSite} progress={loadProgress} />
+          )}
+        </AnimatePresence>
+
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.95, filter: "blur(10px)" }}
+          animate={booting ? 
+            { opacity: 0, scale: 0.95, filter: "blur(10px)" } : 
+            { opacity: 1, scale: 1, filter: "blur(0px)" }
+          }
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          className={`w-full ${booting ? 'pointer-events-none h-screen overflow-hidden' : ''}`}
+        >
+          <Home onProgress={setLoadProgress} />
+        </motion.div>
       </div>
     </SmoothScroll>
   );

@@ -2,7 +2,7 @@ import Magnet from "./Magnet";
 
 export default function Footer() {
   return (
-    <footer className="py-20 bg-[#050505] relative overflow-hidden border-t border-white/5">
+    <footer className="py-[var(--section-padding)] bg-[#050505] relative overflow-hidden border-t border-white/5">
       <div className="ambient-mesh opacity-10"></div>
       <div className="max-w-7xl mx-auto px-6 relative z-10 flex flex-col md:flex-row justify-between items-center gap-12">
         <div className="flex flex-col items-center md:items-start gap-3">

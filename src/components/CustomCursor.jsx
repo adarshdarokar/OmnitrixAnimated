@@ -1,38 +1,44 @@
-import { motion, useMotionValue } from "framer-motion";
+import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useEffect, useState } from "react";
 
 export default function CustomCursor() {
   const [isHovering, setIsHovering] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
 
-  // Use MotionValue for instantaneous movement without lag
-  const cursorX = useMotionValue(-100);
-  const cursorY = useMotionValue(-100);
+  const mouseX = useMotionValue(-100);
+  const mouseY = useMotionValue(-100);
+
+  // Spring settings for that "premium" weight
+  const springConfig = { damping: 30, stiffness: 450, mass: 0.5 };
+  const cursorX = useSpring(mouseX, springConfig);
+  const cursorY = useSpring(mouseY, springConfig);
+
+  // Faster spring for the dot
+  const dotSpringConfig = { damping: 40, stiffness: 1000, mass: 0.1 };
+  const dotX = useSpring(mouseX, dotSpringConfig);
+  const dotY = useSpring(mouseY, dotSpringConfig);
 
   useEffect(() => {
     const updateMousePosition = (e) => {
-      cursorX.set(e.clientX - 16); // Center the 32px cursor
-      cursorY.set(e.clientY - 16);
+      mouseX.set(e.clientX - 16); 
+      mouseY.set(e.clientY - 16);
       if (!isVisible) setIsVisible(true);
     };
 
     const handleMouseLeave = () => setIsVisible(false);
     const handleMouseEnter = () => setIsVisible(true);
 
-    // Detect hovers on clickable elements
     const handleMouseOver = (e) => {
-      if (
-        e.target.tagName.toLowerCase() === 'button' ||
-        e.target.tagName.toLowerCase() === 'a' ||
-        e.target.closest('button') ||
-        e.target.closest('a') ||
-        e.target.classList.contains('cursor-pointer') ||
-        e.target.closest('.group')
-      ) {
-        setIsHovering(true);
-      } else {
-        setIsHovering(false);
-      }
+      const target = e.target;
+      const isClickable = 
+        target.tagName.toLowerCase() === 'button' ||
+        target.tagName.toLowerCase() === 'a' ||
+        target.closest('button') ||
+        target.closest('a') ||
+        target.classList.contains('cursor-pointer') ||
+        target.closest('.group');
+      
+      setIsHovering(!!isClickable);
     };
 
     window.addEventListener("mousemove", updateMousePosition);
@@ -46,33 +52,45 @@ export default function CustomCursor() {
       window.removeEventListener("mouseover", handleMouseEnter);
       window.removeEventListener("mouseover", handleMouseOver);
     };
-  }, [cursorX, cursorY, isVisible]);
+  }, [mouseX, mouseY, isVisible]);
 
-  // Hide on small devices where touch is primary
   if (typeof window !== 'undefined' && window.innerWidth < 768) return null;
 
   return (
     <>
-      <motion.div
-        className="fixed top-0 left-0 w-8 h-8 rounded-full pointer-events-none z-[999] mix-blend-screen flex items-center justify-center"
-        style={{
-          x: cursorX,
-          y: cursorY,
-          opacity: isVisible ? 1 : 0
-        }}
-      >
-        <motion.div 
-          animate={{ 
-            scale: isHovering ? 2 : 1,
-            backgroundColor: isHovering ? "rgba(0, 255, 136, 0.2)" : "rgba(0, 255, 136, 1)",
-            border: isHovering ? "1px solid rgba(0, 255, 136, 1)" : "0px solid rgba(0, 255, 136, 0)",
+      <div className="fixed inset-0 pointer-events-none z-[9999]">
+        {/* Main Ring - Weighted Spring */}
+        <motion.div
+          className="fixed top-0 left-0 w-8 h-8 rounded-full border border-[#00ff88]/50 mix-blend-screen flex items-center justify-center pointer-events-none"
+          style={{
+            x: cursorX,
+            y: cursorY,
+            opacity: isVisible ? 1 : 0,
+            scale: isHovering ? 1.5 : 1
           }}
-          transition={{ duration: 0.2 }}
-          className="w-3 h-3 rounded-full drop-shadow-[0_0_10px_#00ff88]"
-        ></motion.div>
-      </motion.div>
+        >
+          {/* Inner Glow */}
+          <motion.div 
+            animate={{ scale: isHovering ? 1.2 : 1 }}
+            className="absolute inset-0 bg-[#00ff88]/5 rounded-full blur-[2px]"
+          />
+        </motion.div>
+
+        {/* Inner Dot - Faster Spring */}
+        <motion.div
+            className="fixed top-0 left-0 w-1.5 h-1.5 bg-[#00ff88] rounded-full pointer-events-none shadow-[0_0_10px_#00ff88]"
+            style={{
+                x: dotX,
+                y: dotY,
+                translateX: 13, // Center in the 32px ring (32-1.5)/2 approx 15, but let's align
+                translateY: 13,
+                opacity: isVisible ? 1 : 0,
+                scale: isHovering ? 0.5 : 1
+            }}
+        />
+      </div>
       <style>{`
-        body, a, button {
+        body, a, button, [role="button"] {
           cursor: none !important;
         }
       `}</style>

@@ -1,27 +1,17 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { useState, useEffect } from "react";
 
-export default function BootLoader({ onComplete }) {
-  const [progress, setProgress] = useState(0);
-
+export default function BootLoader({ onComplete, progress }) {
   useEffect(() => {
-    const timer = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(timer);
-          setTimeout(onComplete, 800); // Delay calling onComplete to allow exit animation
-          return 100;
-        }
-        return prev + 1;
-      });
-    }, 25); // Update progress every 25ms for a 2.5s total load time
-    return () => clearInterval(timer);
-  }, [onComplete]);
+    if (progress >= 100) {
+      setTimeout(onComplete, 200); 
+    }
+  }, [progress, onComplete]);
 
   return (
     <motion.div 
-      exit={{ opacity: 0, scale: 1.1 }}
-      transition={{ duration: 0.8, ease: "easeInOut" }}
+      exit={{ opacity: 0, scale: 1.05, filter: "blur(10px)" }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
       className="fixed inset-0 z-[1000] bg-[#050505] flex items-center justify-center overflow-hidden"
     >
       {/* Background Ambience - Optimized */}

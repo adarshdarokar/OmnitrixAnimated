@@ -11,8 +11,10 @@ const SmoothScroll = ({ children }) => {
       smoothWheel: true,
       wheelMultiplier: 1,
       smoothTouch: false,
-      touchMultiplier: 2,
+      touchMultiplier: 1.5,
       infinite: false,
+      lerp: 0.1, 
+      syncTouch: true 
     });
 
     function raf(time) {

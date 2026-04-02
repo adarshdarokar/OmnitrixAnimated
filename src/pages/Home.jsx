@@ -6,7 +6,7 @@ import AlienSection from "../components/AlienSection";
 import TechnologySection from "../components/TechnologySection";
 import Footer from "../components/Footer";
 
-export default function Home() {
+export default function Home({ onProgress }) {
   return (
     <main className="w-full relative">
       <Navbar />
@@ -14,17 +14,17 @@ export default function Home() {
       {/* Cinematic Gaming Hero Section */}
       <HeroSection />
       
-      {/* Global Ambient Glows */}
-      <div className="ambient-patch -top-20 -left-20 opacity-40"></div>
-      <div className="ambient-patch top-1/4 -right-40 opacity-30"></div>
-      <div className="ambient-patch top-1/2 left-1/4 opacity-20"></div>
-      <div className="ambient-patch bottom-1/4 -left-40 opacity-30"></div>
+      {/* Global Ambient Glows - Optimized with translate-z-0 */}
+      <div className="ambient-patch -top-20 -left-20 opacity-40 transform-gpu"></div>
+      <div className="ambient-patch top-1/4 -right-40 opacity-30 transform-gpu"></div>
+      <div className="ambient-patch top-1/2 left-1/4 opacity-20 transform-gpu"></div>
+      <div className="ambient-patch bottom-1/4 -left-40 opacity-30 transform-gpu"></div>
 
       {/* Infinite scrolling branded text */}
       <InfiniteMarquee />
 
       {/* Scroll-based animation section */}
-      <OmnitrixScroll />
+      <OmnitrixScroll onProgress={onProgress} />
       
       {/* Static Sections follow the scroll content */}
       <AlienSection />

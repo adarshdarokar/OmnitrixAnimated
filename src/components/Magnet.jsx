@@ -39,7 +39,7 @@ const Magnet = ({ children, strength = 0.5, range = 100 }) => {
     <motion.div
       ref={ref}
       animate={{ x: position.x, y: position.y }}
-      transition={{ type: 'spring', stiffness: 150, damping: 15, mass: 0.1 }}
+      transition={{ type: 'spring', stiffness: 100, damping: 20, mass: 0.5, restDelta: 0.001 }}
       onMouseLeave={resetPosition}
       className="inline-block"
     >
