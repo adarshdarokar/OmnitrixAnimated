@@ -101,6 +101,7 @@ export default function AlienSection() {
                   <img 
                     src={alien.image} 
                     alt={alien.name} 
+                    loading="lazy"
                     className="w-full h-full object-contain relative z-10 transition-transform duration-700 group-hover:scale-105 group-hover:-translate-y-4" 
                   />
                   <div className="scanline-overlay z-20 group-hover:opacity-100 opacity-0 transition-opacity"></div>

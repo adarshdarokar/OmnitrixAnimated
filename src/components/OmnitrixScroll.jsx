@@ -62,46 +62,49 @@ export default function OmnitrixScroll({ onProgress }) {
     loadImages();
   }, []);
 
-  const drawFrame = (frameIndex, ctx, canvas) => {
+  const drawFrame = useCallback((frameIndex, ctx, canvas) => {
     const img = images[frameIndex];
     if (!img || !ctx || !canvas) return;
 
-    const canvasContainer = canvas.parentElement;
-    const cssWidth = canvasContainer?.clientWidth || window.innerWidth;
-    const cssHeight = window.innerHeight;
+    // Use cached dimensions if available or calculate once
+    const canvasWidth = canvas.width / (window.devicePixelRatio || 1);
+    const canvasHeight = canvas.height / (window.devicePixelRatio || 1);
     
-    ctx.clearRect(0, 0, cssWidth, cssHeight);
+    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
 
-    const hRatio = cssWidth / img.width;
-    const vRatio = cssHeight / img.height;
+    const hRatio = canvasWidth / img.width;
+    const vRatio = canvasHeight / img.height;
     const ratio = Math.min(hRatio, vRatio); 
     
     const drawWidth = img.width * ratio;
     const drawHeight = img.height * ratio;
     
-    const centerShift_x = (cssWidth - drawWidth) / 2;
-    const centerShift_y = (cssHeight - drawHeight) / 2;
+    const centerShift_x = (canvasWidth - drawWidth) / 2;
+    const centerShift_y = (canvasHeight - drawHeight) / 2;
 
     ctx.drawImage(
       img,
       0, 0, img.width, img.height,
       centerShift_x, centerShift_y, drawWidth, drawHeight
     );
-  };
+  }, [images]);
 
   useEffect(() => {
     if (!isLoaded || images.length === 0 || !canvasRef.current) return;
 
     const canvas = canvasRef.current;
-    const context = canvas.getContext("2d", { alpha: true }); 
+    const context = canvas.getContext("2d", { 
+      alpha: true,
+      desynchronized: true // Production-level optimization for lower latency
+    }); 
     let animationFrameId;
-    let currentFrameIndex = 0;
+    let currentFrameIndex = -1;
 
     const handleResize = () => {
       const dpr = window.devicePixelRatio || 1;
       const canvasContainer = canvas.parentElement;
       const cssWidth = canvasContainer?.clientWidth || window.innerWidth;
-      const cssHeight = window.innerHeight;
+      const cssHeight = canvasContainer?.clientHeight || window.innerHeight;
       
       canvas.width = cssWidth * dpr;
       canvas.height = cssHeight * dpr;
@@ -111,15 +114,17 @@ export default function OmnitrixScroll({ onProgress }) {
       
       context.scale(dpr, dpr);
       context.imageSmoothingEnabled = true;
-      context.imageSmoothingQuality = "high";
+      context.imageSmoothingQuality = "medium"; // "high" is often overkill and expensive
       
-      drawFrame(currentFrameIndex, context, canvas);
+      if (currentFrameIndex !== -1) {
+        drawFrame(currentFrameIndex, context, canvas);
+      }
     };
 
     window.addEventListener("resize", handleResize);
     handleResize(); 
 
-    const unsubscribe = smoothProgress.on("change", (latest) => {
+    const render = (latest) => {
       const frameIndex = Math.min(
         TOTAL_FRAMES - 1,
         Math.max(0, Math.floor(latest * TOTAL_FRAMES))
@@ -127,21 +132,24 @@ export default function OmnitrixScroll({ onProgress }) {
       
       if (frameIndex !== currentFrameIndex) {
         currentFrameIndex = frameIndex;
-        if (animationFrameId) {
-          cancelAnimationFrame(animationFrameId);
-        }
-        animationFrameId = requestAnimationFrame(() => drawFrame(currentFrameIndex, context, canvas));
+        drawFrame(currentFrameIndex, context, canvas);
       }
+    };
+
+    // Initialize first frame
+    render(smoothProgress.get());
+
+    const unsubscribe = smoothProgress.on("change", (latest) => {
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
+      animationFrameId = requestAnimationFrame(() => render(latest));
     });
 
     return () => {
       window.removeEventListener("resize", handleResize);
       unsubscribe();
-      if (animationFrameId) {
-        cancelAnimationFrame(animationFrameId);
-      }
+      if (animationFrameId) cancelAnimationFrame(animationFrameId);
     };
-  }, [isLoaded, images, smoothProgress]);
+  }, [isLoaded, images, smoothProgress, drawFrame]);
 
   // Cinematic scroll events
   // 0% - 20%

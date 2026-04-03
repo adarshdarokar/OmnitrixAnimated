@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback, useMemo, memo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Home from "./pages/Home";
 import BootLoader from "./components/BootLoader";
@@ -8,15 +8,22 @@ import SmoothScroll from "./components/SmoothScroll";
 import NoiseOverlay from "./components/NoiseOverlay";
 import SVGFilters from "./components/SVGFilters";
 
+// Memoize the Home component to prevent full-tree re-renders when loadProgress updates
+const MemoizedHome = memo(Home);
+
 export default function App() {
   const [booting, setBooting] = useState(true);
   const [audioStarted, setAudioStarted] = useState(false);
   const [loadProgress, setLoadProgress] = useState(0);
 
-  const startSite = () => {
+  const startSite = useCallback(() => {
     setBooting(false);
     setAudioStarted(true);
-  };
+  }, []);
+
+  const handleProgress = useCallback((progress) => {
+    setLoadProgress(progress);
+  }, []);
 
   return (
     <SmoothScroll>
@@ -26,7 +33,7 @@ export default function App() {
         <SVGFilters />
         <BackgroundMusic play={audioStarted} />
         
-        <AnimatePresence>
+        <AnimatePresence mode="wait">
           {booting && (
             <BootLoader key="loader" onComplete={startSite} progress={loadProgress} />
           )}
@@ -41,7 +48,7 @@ export default function App() {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
           className={`w-full ${booting ? 'pointer-events-none h-screen overflow-hidden' : ''}`}
         >
-          <Home onProgress={setLoadProgress} />
+          <MemoizedHome onProgress={handleProgress} />
         </motion.div>
       </div>
     </SmoothScroll>

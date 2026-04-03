@@ -1,7 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Lenis from 'lenis';
 
 const SmoothScroll = ({ children }) => {
+  const lenisRef = useRef(null);
+  const rafRef = useRef(null);
+
   useEffect(() => {
     const lenis = new Lenis({
       duration: 1.2,
@@ -17,15 +20,22 @@ const SmoothScroll = ({ children }) => {
       syncTouch: true 
     });
 
+    lenisRef.current = lenis;
+
     function raf(time) {
       lenis.raf(time);
-      requestAnimationFrame(raf);
+      rafRef.current = requestAnimationFrame(raf);
     }
 
-    requestAnimationFrame(raf);
+    rafRef.current = requestAnimationFrame(raf);
+
+    // Global accessibility: allow interacting with lenis if needed
+    window.lenis = lenis;
 
     return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
       lenis.destroy();
+      window.lenis = null;
     };
   }, []);
 

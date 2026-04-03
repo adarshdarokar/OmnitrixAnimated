@@ -1,47 +1,88 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import React, { useRef, useState, useEffect, useCallback } from 'react';
+import { motion, useMotionValue, useSpring } from 'framer-motion';
 
 const Magnet = ({ children, strength = 0.5, range = 100 }) => {
   const ref = useRef(null);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
+  
+  // Use MotionValues to bypass React re-renders for every mouse move
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  
+  // Spring configuration for smooth motion
+  const springConfig = { 
+    type: 'spring', 
+    stiffness: 150, 
+    damping: 15, 
+    mass: 0.1,
+    restDelta: 0.001 
+  };
+  
+  const springX = useSpring(x, springConfig);
+  const springY = useSpring(y, springConfig);
+  
+  const [isHovered, setIsHovered] = useState(false);
+  const boundsRef = useRef(null);
 
-  const handleMouseMove = (e) => {
-    if (!ref.current) return;
+  const updateBounds = useCallback(() => {
+    if (ref.current) {
+      boundsRef.current = ref.current.getBoundingClientRect();
+    }
+  }, []);
 
-    const { left, top, width, height } = ref.current.getBoundingClientRect();
+  const handleMouseMove = useCallback((e) => {
+    if (!boundsRef.current) updateBounds();
+    
+    const { left, top, width, height } = boundsRef.current;
+    
     const centerX = left + width / 2;
     const centerY = top + height / 2;
 
     const distanceX = e.clientX - centerX;
     const distanceY = e.clientY - centerY;
-    const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+    const distance = Math.hypot(distanceX, distanceY);
 
     if (distance < range) {
-      setPosition({
-        x: distanceX * strength,
-        y: distanceY * strength,
-      });
+      if (!isHovered) setIsHovered(true);
+      x.set(distanceX * strength);
+      y.set(distanceY * strength);
     } else {
-      setPosition({ x: 0, y: 0 });
+      if (isHovered) {
+        setIsHovered(false);
+        x.set(0);
+        y.set(0);
+      }
     }
-  };
+  }, [range, strength, x, y, isHovered, updateBounds]);
 
-  const resetPosition = () => {
-    setPosition({ x: 0, y: 0 });
-  };
+  const resetPosition = useCallback(() => {
+    setIsHovered(false);
+    x.set(0);
+    y.set(0);
+  }, [x, y]);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    
+    // Only add global listener if it's actually beneficial,
+    // but caching bounds on mouse move start is key.
     window.addEventListener('mousemove', handleMouseMove);
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, []);
+    window.addEventListener('scroll', updateBounds);
+    window.addEventListener('resize', updateBounds);
+    
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('scroll', updateBounds);
+      window.removeEventListener('resize', updateBounds);
+    };
+  }, [handleMouseMove, updateBounds]);
 
   return (
     <motion.div
       ref={ref}
-      animate={{ x: position.x, y: position.y }}
-      transition={{ type: 'spring', stiffness: 100, damping: 20, mass: 0.5, restDelta: 0.001 }}
+      onMouseEnter={updateBounds}
       onMouseLeave={resetPosition}
-      className="inline-block"
+      style={{ x: springX, y: springY }}
+      className="inline-block will-change-transform"
     >
       {children}
     </motion.div>
