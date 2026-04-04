@@ -58,31 +58,28 @@ export default function OmnitrixScroll({ onProgress }) {
     loadImages();
   }, []);
 
+  const metricsRef = useRef({
+    dpr: 1,
+    canvasWidth: 0,
+    canvasHeight: 0,
+    imgRatio: 1,
+    drawWidth: 0,
+    drawHeight: 0,
+    shiftX: 0,
+    shiftY: 0
+  });
+
   const drawFrame = useCallback((frameIndex, ctx, canvas) => {
     const img = images[frameIndex];
     if (!img || !ctx || !canvas) return;
 
-    // Use cached dimensions if available or calculate once
-    const dpr = window.devicePixelRatio || 1;
-    const canvasWidth = canvas.width / dpr;
-    const canvasHeight = canvas.height / dpr;
-    
-    ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-
-    const hRatio = canvasWidth / img.width;
-    const vRatio = canvasHeight / img.height;
-    const ratio = Math.min(hRatio, vRatio); 
-    
-    const drawWidth = img.width * ratio;
-    const drawHeight = img.height * ratio;
-    
-    const centerShift_x = (canvasWidth - drawWidth) / 2;
-    const centerShift_y = (canvasHeight - drawHeight) / 2;
+    const m = metricsRef.current;
+    ctx.clearRect(0, 0, m.canvasWidth, m.canvasHeight);
 
     ctx.drawImage(
       img,
       0, 0, img.width, img.height,
-      centerShift_x, centerShift_y, drawWidth, drawHeight
+      m.shiftX, m.shiftY, m.drawWidth, m.drawHeight
     );
   }, [images]);
 
@@ -110,7 +107,24 @@ export default function OmnitrixScroll({ onProgress }) {
       canvas.style.height = `${cssHeight}px`;
       
       context.scale(dpr, dpr);
-      context.imageSmoothingEnabled = false; // Disable for maximum performance and a sharper pixel look
+
+      // Cache metrics to avoid recalculating per frame
+      const img = images[0] || { width: 1920, height: 1080 };
+      const hRatio = cssWidth / img.width;
+      const vRatio = cssHeight / img.height;
+      const ratio = Math.min(hRatio, vRatio);
+      
+      metricsRef.current = {
+        dpr,
+        canvasWidth: cssWidth,
+        canvasHeight: cssHeight,
+        drawWidth: img.width * ratio,
+        drawHeight: img.height * ratio,
+        shiftX: (cssWidth - img.width * ratio) / 2,
+        shiftY: (cssHeight - img.height * ratio) / 2
+      };
+
+      context.imageSmoothingEnabled = false;
       
       if (currentFrameIndex !== -1) {
         drawFrame(currentFrameIndex, context, canvas);
@@ -144,6 +158,7 @@ export default function OmnitrixScroll({ onProgress }) {
       unsubscribe();
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
     };
+
   }, [isLoaded, images, smoothProgress, drawFrame]);
 
   // Transform definitions
@@ -170,9 +185,9 @@ export default function OmnitrixScroll({ onProgress }) {
         <div className="absolute bottom-8 left-8 w-12 h-12 border-b-2 border-l-2 border-[#00ff88]/50 z-10 opacity-70"></div>
         <div className="absolute bottom-8 right-8 w-12 h-12 border-b-2 border-r-2 border-[#00ff88]/50 z-10 opacity-70"></div>
 
-        {/* Ambient Omnitrix Pulse */}
+        {/* Ambient Omnitrix Pulse - Optimized blur */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-          <div className="w-[50vw] h-[50vh] bg-[#00ff88]/5 blur-[150px] rounded-full animate-pulse mix-blend-screen transform-gpu"></div>
+          <div className="w-[50vw] h-[50vh] bg-[#00ff88]/5 blur-[80px] rounded-full animate-pulse mix-blend-screen transform-gpu"></div>
         </div>
 
         {/* Cinematic Vignette Overlay */}

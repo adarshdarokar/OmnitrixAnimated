@@ -7,16 +7,16 @@ const SmoothScroll = ({ children }) => {
 
   useEffect(() => {
     const lenis = new Lenis({
-      duration: 1.2,
+      duration: 1.0, // Punchier duration
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
       orientation: 'vertical',
       gestureOrientation: 'vertical',
       smoothWheel: true,
       wheelMultiplier: 1,
       smoothTouch: false,
-      touchMultiplier: 1.5,
+      touchMultiplier: 1.2,
       infinite: false,
-      lerp: 0.1, 
+      lerp: 0.08, // Slightly more responsive lerp
       syncTouch: true 
     });
 
@@ -29,7 +29,6 @@ const SmoothScroll = ({ children }) => {
 
     rafRef.current = requestAnimationFrame(raf);
 
-    // Global accessibility: allow interacting with lenis if needed
     window.lenis = lenis;
 
     return () => {
@@ -43,3 +42,4 @@ const SmoothScroll = ({ children }) => {
 };
 
 export default SmoothScroll;
+

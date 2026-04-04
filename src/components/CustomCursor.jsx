@@ -1,37 +1,41 @@
-import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { useEffect, useState, useCallback } from "react";
+import { motion, useMotionValue, useSpring } from "framer-motion";
+import { useEffect, useState, useCallback, useRef } from "react";
 
 export default function CustomCursor() {
   const [isHovering, setIsHovering] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
+  const lastTargetRef = useRef(null);
+  const rafId = useRef(null);
 
-  // Use raw MotionValues for maximum performance (no re-renders)
+  // Use raw MotionValues for maximum performance
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
 
-  // Ultra-responsive spring settings to eliminate perceived input lag
-  const springConfig = { damping: 25, stiffness: 700, mass: 0.1 };
+  // Higher stiffness and mass-less feel for "instant" responsiveness
+  const springConfig = { damping: 30, stiffness: 800, mass: 0.1 };
   const cursorX = useSpring(mouseX, springConfig);
   const cursorY = useSpring(mouseY, springConfig);
 
-  // Instant response for the inner dot
-  const dotSpringConfig = { damping: 30, stiffness: 1000, mass: 0.05 };
+  const dotSpringConfig = { damping: 35, stiffness: 1200, mass: 0.05 };
   const dotX = useSpring(mouseX, dotSpringConfig);
   const dotY = useSpring(mouseY, dotSpringConfig);
 
   const updateMousePosition = useCallback((e) => {
-    // Subtracting half of cursor width (32px / 2 = 16)
-    mouseX.set(e.clientX - 16); 
-    mouseY.set(e.clientY - 16);
-    if (!isVisible) setIsVisible(true);
+    if (rafId.current) cancelAnimationFrame(rafId.current);
+    
+    rafId.current = requestAnimationFrame(() => {
+      mouseX.set(e.clientX - 16); 
+      mouseY.set(e.clientY - 16);
+      if (!isVisible) setIsVisible(true);
+    });
   }, [mouseX, mouseY, isVisible]);
 
   const handleMouseOver = useCallback((e) => {
-    const target = e.target;
-    // Optimized check: use matches or closest with a pre-defined selector
-    const isClickable = 
-      target.closest('button, a, .cursor-pointer, .group');
-    
+    // Only check if the target has changed to avoid heavy closest() calls
+    if (e.target === lastTargetRef.current) return;
+    lastTargetRef.current = e.target;
+
+    const isClickable = e.target.closest('button, a, .cursor-pointer, .group');
     setIsHovering(!!isClickable);
   }, []);
 
@@ -44,13 +48,14 @@ export default function CustomCursor() {
     window.addEventListener("mousemove", updateMousePosition, { passive: true });
     window.addEventListener("mouseleave", handleMouseLeave);
     window.addEventListener("mouseenter", handleMouseEnter);
-    window.addEventListener("mouseover", handleMouseOver);
+    window.addEventListener("mouseover", handleMouseOver, { passive: true });
 
     return () => {
       window.removeEventListener("mousemove", updateMousePosition);
       window.removeEventListener("mouseleave", handleMouseLeave);
       window.removeEventListener("mouseenter", handleMouseEnter);
       window.removeEventListener("mouseover", handleMouseOver);
+      if (rafId.current) cancelAnimationFrame(rafId.current);
     };
   }, [updateMousePosition, handleMouseOver]);
 
@@ -59,7 +64,6 @@ export default function CustomCursor() {
   return (
     <>
       <div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden">
-        {/* Main Ring - Optimized with transform-gpu */}
         <motion.div
           className="fixed top-0 left-0 w-8 h-8 rounded-full border border-[#00ff88]/50 mix-blend-screen flex items-center justify-center pointer-events-none transform-gpu will-change-transform"
           style={{
@@ -69,20 +73,18 @@ export default function CustomCursor() {
             scale: isHovering ? 1.5 : 1
           }}
         >
-          {/* Inner Glow */}
           <motion.div 
             animate={{ scale: isHovering ? 1.2 : 1 }}
             className="absolute inset-0 bg-[#00ff88]/10 rounded-full blur-[4px]"
           />
         </motion.div>
 
-        {/* Inner Dot - Optimized with transform-gpu */}
         <motion.div
             className="fixed top-0 left-0 w-1.5 h-1.5 bg-[#00ff88] rounded-full pointer-events-none shadow-[0_0_10px_#00ff88] transform-gpu will-change-transform"
             style={{
                 x: dotX,
                 y: dotY,
-                translateX: 13, // Precise centering (32/2 - 1.5/2)
+                translateX: 13,
                 translateY: 13,
                 opacity: isVisible ? 1 : 0,
                 scale: isHovering ? 0.3 : 1
@@ -97,3 +99,4 @@ export default function CustomCursor() {
     </>
   );
 }
+
