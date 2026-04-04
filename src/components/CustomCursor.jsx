@@ -9,13 +9,13 @@ export default function CustomCursor() {
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
 
-  // Optimized spring settings for that "premium" weight
-  const springConfig = { damping: 40, stiffness: 400, mass: 0.4 };
+  // Ultra-responsive spring settings to eliminate perceived input lag
+  const springConfig = { damping: 25, stiffness: 700, mass: 0.1 };
   const cursorX = useSpring(mouseX, springConfig);
   const cursorY = useSpring(mouseY, springConfig);
 
-  // Faster spring for the inner dot
-  const dotSpringConfig = { damping: 50, stiffness: 800, mass: 0.1 };
+  // Instant response for the inner dot
+  const dotSpringConfig = { damping: 30, stiffness: 1000, mass: 0.05 };
   const dotX = useSpring(mouseX, dotSpringConfig);
   const dotY = useSpring(mouseY, dotSpringConfig);
 
