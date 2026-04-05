@@ -84,7 +84,7 @@ export default function OmnitrixScroll({ onProgress }) {
   }, [images]);
 
   useEffect(() => {
-    if (!isLoaded || images.length === 0 || !canvasRef.current) return;
+    if (!isLoaded || images.length === 0 || !canvasRef.current || !containerRef.current) return;
 
     const canvas = canvasRef.current;
     const context = canvas.getContext("2d", { 
@@ -93,6 +93,14 @@ export default function OmnitrixScroll({ onProgress }) {
     }); 
     let animationFrameId;
     let currentFrameIndex = -1;
+    let isInView = false;
+
+    // Intersection Observer to stop rendering when not in view
+    const observer = new IntersectionObserver((entries) => {
+        isInView = entries[0].isIntersecting;
+    }, { threshold: 0.01 });
+    
+    observer.observe(containerRef.current);
 
     const handleResize = () => {
       const dpr = window.devicePixelRatio || 1;
@@ -136,16 +144,41 @@ export default function OmnitrixScroll({ onProgress }) {
     window.addEventListener("resize", handleResize);
     handleResize(); 
 
+    // Sub-frame blending for ultra-smoothness
     const render = (latest) => {
-      const frameIndex = Math.min(
-        TOTAL_FRAMES - 1,
-        Math.max(0, Math.floor(latest * TOTAL_FRAMES))
-      );
-      
-      if (frameIndex !== currentFrameIndex) {
-        currentFrameIndex = frameIndex;
-        drawFrame(currentFrameIndex, context, canvas);
+      if (!isInView) return;
+
+      const progress = latest * (TOTAL_FRAMES - 1);
+      const frameIndex = Math.floor(progress);
+      const nextFrameIndex = Math.min(frameIndex + 1, TOTAL_FRAMES - 1);
+      const frameAlpha = progress - frameIndex; // Fractional part
+
+      const m = metricsRef.current;
+      context.clearRect(0, 0, m.canvasWidth, m.canvasHeight);
+
+      // Blend two frames if alpha is significant, otherwise just draw one
+      if (frameAlpha > 0.05 && frameIndex !== nextFrameIndex) {
+          // Draw first frame
+          context.globalAlpha = 1 - frameAlpha;
+          const img1 = images[frameIndex];
+          if (img1) {
+              context.drawImage(img1, 0, 0, img1.width, img1.height, m.shiftX, m.shiftY, m.drawWidth, m.drawHeight);
+          }
+          // Draw next frame
+          context.globalAlpha = frameAlpha;
+          const img2 = images[nextFrameIndex];
+          if (img2) {
+              context.drawImage(img2, 0, 0, img2.width, img2.height, m.shiftX, m.shiftY, m.drawWidth, m.drawHeight);
+          }
+          context.globalAlpha = 1;
+      } else {
+          const img = images[frameIndex];
+          if (img) {
+              context.drawImage(img, 0, 0, img.width, img.height, m.shiftX, m.shiftY, m.drawWidth, m.drawHeight);
+          }
       }
+      
+      currentFrameIndex = frameIndex;
     };
 
     const unsubscribe = smoothProgress.on("change", (latest) => {
@@ -155,11 +188,12 @@ export default function OmnitrixScroll({ onProgress }) {
 
     return () => {
       window.removeEventListener("resize", handleResize);
+      observer.disconnect();
       unsubscribe();
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
     };
 
-  }, [isLoaded, images, smoothProgress, drawFrame]);
+  }, [isLoaded, images, smoothProgress]);
 
   // Transform definitions
   const canvasScale = useTransform(smoothProgress, [0, 1], [1, 1.15]);

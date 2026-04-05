@@ -25,56 +25,54 @@
     scroll-behavior: smooth;
     scroll-padding-top: var(--header-height);
     background-color: var(--color-bg-primary);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
   body {
-    @apply bg-[#050505] text-white/90 font-inter antialiased;
+    @apply bg-[#050505] text-white/90 font-inter;
     overflow-x: hidden;
-  }
-  h1, h2, h3, .font-heading {
-    @apply font-orbitron tracking-tighter uppercase;
+    text-rendering: optimizeLegibility;
   }
 }
 
-/* Optimized Glassmorphism - Reduced Blur for Performance */
+/* Hardware Acceleration & Layout Stability */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+/* Optimized Glassmorphism - Reduced Blur & Hardware Accelerated */
 .glass-panel {
   background: rgba(10, 10, 10, 0.6);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border: 1px solid rgba(0, 255, 136, 0.05);
   transform: translateZ(0);
-  will-change: backdrop-filter;
+  backface-visibility: hidden;
 }
 
 .glass-panel-glow {
   background: rgba(0, 255, 136, 0.02);
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(6px);
   border: 1px solid rgba(0, 255, 136, 0.1);
-}
-
-/* Premium Effects - Optimized Shadows */
-.glow-text {
-  text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
-}
-
-.glow-border {
-  border: 1px solid rgba(0, 255, 136, 0.15);
-  transition: all 0.3s ease-out;
-}
-
-.glow-border:hover {
-  border: 1px solid rgba(0, 255, 136, 0.4);
-  background: rgba(0, 255, 136, 0.02);
-}
-
-.ambient-patch {
-  @apply absolute w-[600px] h-[600px] bg-[#00ff88]/20 rounded-full blur-[120px] pointer-events-none;
-  will-change: transform, opacity;
-}
-
-.transform-gpu {
   transform: translateZ(0);
 }
 
+/* Optimized Ambient Layers */
+.ambient-patch {
+  @apply absolute w-[600px] h-[600px] bg-[#00ff88]/15 rounded-full blur-[100px] pointer-events-none;
+  will-change: transform, opacity;
+  transform: translate3d(0,0,0);
+}
+
+/* Section Optimization */
 section {
   padding-top: var(--section-padding);
   padding-bottom: var(--section-padding);
@@ -83,11 +81,12 @@ section {
   transform: translateZ(0);
 }
 
-/* Gaming Card Redesign - Performance Optimized */
+/* Reduced Painting for Interactor Elements */
 .gaming-card {
   @apply relative bg-black/40 border border-white/10 backdrop-blur-md overflow-hidden;
-  will-change: transform, opacity;
+  will-change: transform, border-color;
   transform: translateZ(0);
+  backface-visibility: hidden;
   clip-path: polygon(12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%, 0 12px);
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s ease;
 }

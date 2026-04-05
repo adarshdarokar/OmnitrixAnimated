@@ -23,22 +23,22 @@ const SVGFilters = () => {
           <feBlend in="blend" in2="SourceGraphic" mode="screen" />
         </filter>
 
-        <filter id="noise">
-          <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
+        <filter id="noise" color-interpolation-filters="sRGB">
+          <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="2" stitchTiles="stitch" />
           <feColorMatrix type="saturate" values="0" />
           <feComponentTransfer>
-            <feFuncA type="linear" slope="0.1" />
+            <feFuncA type="linear" slope="0.08" />
           </feComponentTransfer>
           <feBlend mode="overlay" in2="SourceGraphic" />
         </filter>
         
-        <filter id="grain">
-          <feTurbulence type="turbulence" baseFrequency="0.5" numOctaves="2" result="turbulence" />
+        <filter id="grain" color-interpolation-filters="sRGB">
+          <feTurbulence type="turbulence" baseFrequency="0.5" numOctaves="1" result="turbulence" />
           <feColorMatrix type="saturate" values="0" in="turbulence" result="colormatrix" />
           <feComponentTransfer in="colormatrix" result="componentTransfer">
-            <feFuncR type="linear" slope="3" intercept="-1" />
-            <feFuncG type="linear" slope="3" intercept="-1" />
-            <feFuncB type="linear" slope="3" intercept="-1" />
+            <feFuncR type="linear" slope="2" intercept="-0.5" />
+            <feFuncG type="linear" slope="2" intercept="-0.5" />
+            <feFuncB type="linear" slope="2" intercept="-0.5" />
           </feComponentTransfer>
           <feBlend mode="soft-light" in="componentTransfer" in2="SourceGraphic" result="blend" />
         </filter>

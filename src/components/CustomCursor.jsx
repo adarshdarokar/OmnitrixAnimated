@@ -1,8 +1,7 @@
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useEffect, useState, useCallback, useRef } from "react";
 
 export default function CustomCursor() {
-  const [isHovering, setIsHovering] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const lastTargetRef = useRef(null);
   const rafId = useRef(null);
@@ -10,8 +9,9 @@ export default function CustomCursor() {
   // Use raw MotionValues for maximum performance
   const mouseX = useMotionValue(-100);
   const mouseY = useMotionValue(-100);
+  const hoverValue = useMotionValue(0); // 0 = default, 1 = hovering
 
-  // Higher stiffness and mass-less feel for "instant" responsiveness
+  // Springs for smoothness
   const springConfig = { damping: 30, stiffness: 800, mass: 0.1 };
   const cursorX = useSpring(mouseX, springConfig);
   const cursorY = useSpring(mouseY, springConfig);
@@ -19,6 +19,11 @@ export default function CustomCursor() {
   const dotSpringConfig = { damping: 35, stiffness: 1200, mass: 0.05 };
   const dotX = useSpring(mouseX, dotSpringConfig);
   const dotY = useSpring(mouseY, dotSpringConfig);
+
+  // Derived transforms to avoid React re-renders
+  const cursorScale = useTransform(hoverValue, [0, 1], [1, 1.5]);
+  const dotScale = useTransform(hoverValue, [0, 1], [1, 0.3]);
+  const glowScale = useTransform(hoverValue, [0, 1], [1, 1.2]);
 
   const updateMousePosition = useCallback((e) => {
     if (rafId.current) cancelAnimationFrame(rafId.current);
@@ -31,13 +36,19 @@ export default function CustomCursor() {
   }, [mouseX, mouseY, isVisible]);
 
   const handleMouseOver = useCallback((e) => {
-    // Only check if the target has changed to avoid heavy closest() calls
     if (e.target === lastTargetRef.current) return;
     lastTargetRef.current = e.target;
 
-    const isClickable = e.target.closest('button, a, .cursor-pointer, .group');
-    setIsHovering(!!isClickable);
-  }, []);
+    // Fast check for common interactive elements
+    const tag = e.target.tagName.toLowerCase();
+    const isInteractive = 
+      tag === 'button' || 
+      tag === 'a' || 
+      e.target.classList.contains('cursor-pointer') ||
+      e.target.closest('button, a, .group'); // Fallback for nested elements
+
+    hoverValue.set(isInteractive ? 1 : 0);
+  }, [hoverValue]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -70,11 +81,11 @@ export default function CustomCursor() {
             x: cursorX,
             y: cursorY,
             opacity: isVisible ? 1 : 0,
-            scale: isHovering ? 1.5 : 1
+            scale: cursorScale
           }}
         >
           <motion.div 
-            animate={{ scale: isHovering ? 1.2 : 1 }}
+            style={{ scale: glowScale }}
             className="absolute inset-0 bg-[#00ff88]/10 rounded-full blur-[4px]"
           />
         </motion.div>
@@ -87,7 +98,7 @@ export default function CustomCursor() {
                 translateX: 13,
                 translateY: 13,
                 opacity: isVisible ? 1 : 0,
-                scale: isHovering ? 0.3 : 1
+                scale: dotScale
             }}
         />
       </div>
