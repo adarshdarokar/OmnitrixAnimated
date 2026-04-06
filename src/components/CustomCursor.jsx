@@ -26,13 +26,9 @@ export default function CustomCursor() {
   const glowScale = useTransform(hoverValue, [0, 1], [1, 1.2]);
 
   const updateMousePosition = useCallback((e) => {
-    if (rafId.current) cancelAnimationFrame(rafId.current);
-    
-    rafId.current = requestAnimationFrame(() => {
-      mouseX.set(e.clientX - 16); 
-      mouseY.set(e.clientY - 16);
-      if (!isVisible) setIsVisible(true);
-    });
+    mouseX.set(e.clientX - 16); 
+    mouseY.set(e.clientY - 16);
+    if (!isVisible) setIsVisible(true);
   }, [mouseX, mouseY, isVisible]);
 
   const handleMouseOver = useCallback((e) => {
@@ -86,7 +82,7 @@ export default function CustomCursor() {
         >
           <motion.div 
             style={{ scale: glowScale }}
-            className="absolute inset-0 bg-[#00ff88]/10 rounded-full blur-[4px]"
+            className="absolute inset-0 bg-[#00ff88]/10 rounded-full blur-[2px]"
           />
         </motion.div>
 

@@ -6,7 +6,6 @@ import CustomCursor from "./components/CustomCursor";
 import BackgroundMusic from "./components/BackgroundMusic";
 import SmoothScroll from "./components/SmoothScroll";
 import NoiseOverlay from "./components/NoiseOverlay";
-import SVGFilters from "./components/SVGFilters";
 
 // Memoize the Home component to prevent full-tree re-renders when loadProgress updates
 const MemoizedHome = memo(Home);

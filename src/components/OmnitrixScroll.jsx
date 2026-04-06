@@ -16,8 +16,8 @@ export default function OmnitrixScroll({ onProgress }) {
 
   // Lighter spring physics for smoother framerate without heavy lag
   const smoothProgress = useSpring(scrollYProgress, {
-    stiffness: 120, // Slightly faster for responsiveness
-    damping: 35,
+    stiffness: 150, // Snappier
+    damping: 30, // Faster settling
     restDelta: 0.001
   });
 
@@ -144,38 +144,24 @@ export default function OmnitrixScroll({ onProgress }) {
     window.addEventListener("resize", handleResize);
     handleResize(); 
 
-    // Sub-frame blending for ultra-smoothness
+    // High-performance single-frame rendering
     const render = (latest) => {
       if (!isInView) return;
 
       const progress = latest * (TOTAL_FRAMES - 1);
-      const frameIndex = Math.floor(progress);
-      const nextFrameIndex = Math.min(frameIndex + 1, TOTAL_FRAMES - 1);
-      const frameAlpha = progress - frameIndex; // Fractional part
+      const frameIndex = Math.round(progress); // Use round for snappy frame picking
+      
+      if (frameIndex === currentFrameIndex) return;
 
       const m = metricsRef.current;
       context.clearRect(0, 0, m.canvasWidth, m.canvasHeight);
 
-      // Blend two frames if alpha is significant, otherwise just draw one
-      if (frameAlpha > 0.05 && frameIndex !== nextFrameIndex) {
-          // Draw first frame
-          context.globalAlpha = 1 - frameAlpha;
-          const img1 = images[frameIndex];
-          if (img1) {
-              context.drawImage(img1, 0, 0, img1.width, img1.height, m.shiftX, m.shiftY, m.drawWidth, m.drawHeight);
-          }
-          // Draw next frame
-          context.globalAlpha = frameAlpha;
-          const img2 = images[nextFrameIndex];
-          if (img2) {
-              context.drawImage(img2, 0, 0, img2.width, img2.height, m.shiftX, m.shiftY, m.drawWidth, m.drawHeight);
-          }
-          context.globalAlpha = 1;
-      } else {
-          const img = images[frameIndex];
-          if (img) {
-              context.drawImage(img, 0, 0, img.width, img.height, m.shiftX, m.shiftY, m.drawWidth, m.drawHeight);
-          }
+      const img = images[frameIndex];
+      if (img) {
+          context.drawImage(
+            img, 0, 0, img.width, img.height, 
+            m.shiftX, m.shiftY, m.drawWidth, m.drawHeight
+          );
       }
       
       currentFrameIndex = frameIndex;
@@ -221,7 +207,7 @@ export default function OmnitrixScroll({ onProgress }) {
 
         {/* Ambient Omnitrix Pulse - Optimized blur */}
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-0">
-          <div className="w-[50vw] h-[50vh] bg-[#00ff88]/5 blur-[80px] rounded-full animate-pulse mix-blend-screen transform-gpu"></div>
+          <div className="w-[50vw] h-[50vh] bg-[#00ff88]/5 blur-[40px] rounded-full animate-pulse transform-gpu"></div>
         </div>
 
         {/* Cinematic Vignette Overlay */}

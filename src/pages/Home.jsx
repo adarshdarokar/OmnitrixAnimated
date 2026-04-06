@@ -52,7 +52,7 @@ export default function Home({ onProgress }) {
       {/* About Section Refined - Componentized or Inline */}
       <section id="about" className="py-48 bg-[#050505] relative overflow-hidden border-t border-white/5 content-visibility-auto">
         <div className="ambient-mesh opacity-10"></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[#00ff88]/5 blur-[80px] rounded-full pointer-events-none transform-gpu"></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[#00ff88]/5 blur-[40px] rounded-full pointer-events-none transform-gpu"></div>
         
         <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
           <div className="flex flex-col items-center mb-16 px-4">

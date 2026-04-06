@@ -51,8 +51,8 @@
 /* Optimized Glassmorphism - Reduced Blur & Hardware Accelerated */
 .glass-panel {
   background: rgba(10, 10, 10, 0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   border: 1px solid rgba(0, 255, 136, 0.05);
   transform: translateZ(0);
   backface-visibility: hidden;
@@ -67,7 +67,7 @@
 
 /* Optimized Ambient Layers */
 .ambient-patch {
-  @apply absolute w-[600px] h-[600px] bg-[#00ff88]/15 rounded-full blur-[100px] pointer-events-none;
+  @apply absolute w-[600px] h-[600px] bg-[#00ff88]/15 rounded-full blur-[60px] pointer-events-none;
   will-change: transform, opacity;
   transform: translate3d(0,0,0);
 }
@@ -83,7 +83,8 @@ section {
 
 /* Reduced Painting for Interactor Elements */
 .gaming-card {
-  @apply relative bg-black/40 border border-white/10 backdrop-blur-md overflow-hidden;
+  @apply relative bg-black/40 border border-white/10 overflow-hidden;
+  backdrop-filter: blur(4px);
   will-change: transform, border-color;
   transform: translateZ(0);
   backface-visibility: hidden;
